@@ -1,0 +1,5 @@
+{
+  "packages": ["packages/*", "projects/*"],
+  "workspaces": true,
+  "version": "0.0.1"
+}
