@@ -15,7 +15,9 @@
     "outDir": "dist/lib",
     "typeRoots": ["node_modules/@types", "./global.d.ts"],
     "baseUrl": ".",
-    "paths": {}
+    "rootDir": ".",
+    "paths": {},
+    "types": ["jest"]
   },
-  "include": ["src"]
+  "include": ["src/*", "global.d.ts"]
 }
