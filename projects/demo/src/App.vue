@@ -12,8 +12,8 @@ import { compile } from 'vue/dist/vue.esm-bundler.js';
 export default defineComponent({
   setup(props, context) {
     // console.info('context', context);
-    testCompile();
-    return () => h('div', {}, '谭梓松');
+    const a = testCompile();
+    return () => h(a);
   },
   // render() {
   //   return h(
@@ -27,33 +27,39 @@ export default defineComponent({
 });
 
 function testCompile() {
-  setTimeout(() => {
-    const template = `
-			<Context>
-				<Right>
-					hello world!
-				</Right>
-			</Context>
+  // const template = `
+  // 	<Context>
+  // 		<Right>
+  // 			hello world!
+  // 		</Right>
+  // 	</Context>
+  // `;
+  const template = `
+			<text>
+				hello world!
+			</text>
 		`;
-    const a = compile(template, {
-      transformHoist: (children, context, parent) => {
-        console.info(children, context, parent);
-      },
-      nodeTransforms: [test],
-    });
-    console.info(createApp(a).mount('#app'));
-  }, 0);
+  const a = compile(template, {
+    transformHoist: (children, context, parent) => {
+      console.info(children, context, parent);
+    },
+    nodeTransforms: [test],
+  });
+  console.info(createApp(a));
+  return createApp(a);
+  console.info(createApp(a).mount('#app'));
 }
 let INode = null as any;
 function test(node, context) {
-  if (!INode) {
-    INode = node;
-    // node = null;
-    console.info('INode', INode);
-    // console.info(context.currentNode);
-    console.info(context.parent);
-    // context.currentNode = null;
-    // return null;
-  }
+  // console.info(JSON.parse(JSON.stringify(node)), JSON.parse(JSON.stringify(context)));
+  // if (!INode) {
+  //   INode = node;
+  //   // node = null;
+  //   console.info('INode', INode);
+  //   // console.info(context.currentNode);
+  //   console.info(context.parent);
+  //   // context.currentNode = null;
+  //   // return null;
+  // }
 }
 </script>
