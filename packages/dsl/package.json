@@ -1,6 +1,7 @@
 {
   "name": "@chaos/dsl",
   "version": "0.0.1",
+  "private": false,
   "description": "Components that convert DSL(xml) to Vue",
   "main": "index.ts",
   "typings": "index.ts",
@@ -8,11 +9,14 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "rollup -c rollup.config.ts",
+    "dev": "rollup -c rollup.config.ts --watch",
     "test": "jest"
   },
   "author": "tanzisong920@163.com",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "vue": "^3.0.7"
+  },
   "devDependencies": {
     "@rollup/plugin-alias": "^3.1.1",
     "@types/jest": "^26.0.20",

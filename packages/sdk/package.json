@@ -1,6 +1,7 @@
 {
   "name": "@chaos/sdk",
   "version": "0.0.1",
+  "private": false,
   "description": "tool library",
   "main": "index.ts",
   "typings": "index.ts",

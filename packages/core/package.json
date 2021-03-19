@@ -1,8 +1,8 @@
 {
-  "author": "tzs",
-  "private": true,
   "name": "@chaos/core",
   "version": "1.0.0",
+  "private": false,
+  "author": "tzs",
   "description": "",
   "main": "./src/index.ts",
   "module": "./src/index.ts",

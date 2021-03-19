@@ -1,4 +1,9 @@
 {
+  "version": "0.0.1",
   "packages": ["packages/*", "projects/*"],
-  "version": "0.0.1"
+  "command": {
+    "bootstrap": {
+      "hoist": true
+    }
+  }
 }

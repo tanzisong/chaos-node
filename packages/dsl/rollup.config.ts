@@ -7,7 +7,7 @@ import commonjs from 'rollup-plugin-commonjs';
 const fileName = 'chaos.dsl';
 
 export default {
-  input: './index.ts',
+  input: 'index.ts',
   output: [
     {
       file: `dist/lib/${fileName}.es5.js`,
@@ -21,9 +21,9 @@ export default {
     },
   ],
   watch: {
-    include: 'src/**',
+    exclude: 'node_modules/**',
   },
-  external: [],
+  external: ['vue'],
   plugins: [
     json(),
     typescript({
