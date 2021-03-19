@@ -10,7 +10,7 @@ export interface Props {
 }
 
 function resolve(dsl: AST) {
-  console.info('dsl1111', dsl);
+  console.info('dsl', dsl);
 }
 
 export { resolve };
