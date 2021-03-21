@@ -31,5 +31,4 @@ stats.html
 *.njsproj
 *.sln
 *.sw*
-*.xml
 *.iml

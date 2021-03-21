@@ -13,13 +13,6 @@ function emitError(code: number, message?: string) {
 
 // 可以写一个parse errorCode枚举,将parse过程中 error抽离出来
 
-const layout = `<page-1 background="red" width="100%" height="100%">
-    <page-header position="top"/>
-    <page-menu/>
-    <page-content/>
-  </page-1>
-`;
-
 function parse(context: ParserContext, ancestors: AST[] = []) {
   const nodes: AstNode[] = [];
 
@@ -232,4 +225,5 @@ function last<T>(arr: T[]): T | undefined {
   return arr[arr.length - 1];
 }
 
-parse(genContext(layout));
+export { parse, genContext };
+// parse(genContext(layout));

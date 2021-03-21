@@ -1,8 +1,9 @@
-import resolve from 'rollup-plugin-node-resolve';
-import json from 'rollup-plugin-json';
+import resolve from '@rollup/plugin-node-resolve';
+import json from '@rollup/plugin-json';
 import sourcemaps from 'rollup-plugin-sourcemaps';
 import typescript from 'rollup-plugin-typescript2';
-import commonjs from 'rollup-plugin-commonjs';
+import commonjs from '@rollup/plugin-commonjs';
+import { string } from 'rollup-plugin-string';
 
 const fileName = 'chaos.dsl';
 
@@ -25,6 +26,9 @@ export default {
   },
   external: ['vue'],
   plugins: [
+    string({
+      include: '**/*.xml',
+    }),
     json(),
     typescript({
       useTsconfigDeclarationDir: true,
