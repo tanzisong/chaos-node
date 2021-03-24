@@ -1,14 +1,21 @@
-// import { parse } from '../compile';
-// import { layout } from '../template/layout';
-//
-// console.info(parse(layout));
-
+/*  resole模块  */
 // import { resolve } from './resolve';
-// import dsl from './template/dsl.json';
+// import { createApp } from 'vue';
+// // import pageXml from './template/layout/page.xml';
+// import pageJson from './template/layout/page.json';
 //
-// resolve(dsl as any);
+// // console.info('pageXml', pageXml);
+//
+// const Root = resolve(pageJson as any);
+// const app = createApp(Root);
+// const vm = app.mount('#app');
+// console.info(vm);
 
-// import { parse, genContext } from './compile/runtime/parse';
+/* compile模块 */
+
+import { parse, genContext } from './compile/runtime/parse';
 import pageXml from './template/layout/page.xml';
 
-console.info('pageXml', pageXml);
+const AST = parse(genContext(pageXml as string));
+
+console.info(AST);

@@ -1,3 +1,5 @@
+import { h } from 'vue';
+
 export interface AST {
   tag: string;
   props: Props[];
@@ -10,7 +12,7 @@ export interface Props {
 }
 
 function resolve(dsl: AST) {
-  console.info('dsl', dsl);
+  return h(dsl.tag, '测试文字');
 }
 
 export { resolve };

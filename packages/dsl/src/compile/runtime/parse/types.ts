@@ -1,14 +1,11 @@
 export type Tag = string;
 
-export type PropValue = {
-  content: string;
-  isQuoted: boolean;
-  loc: SourceLocation;
-};
+export type PropValue = string | true;
+export type PropName = string;
 
 export interface Props {
-  name: string;
-  value: string;
+  name: PropName;
+  value: PropValue;
 }
 
 export interface AST {

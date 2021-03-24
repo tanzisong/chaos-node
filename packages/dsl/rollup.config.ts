@@ -24,7 +24,8 @@ export default {
   watch: {
     exclude: 'node_modules/**',
   },
-  external: ['vue'],
+  // external: ['vue'],
+  external: [],
   plugins: [
     string({
       include: '**/*.xml',

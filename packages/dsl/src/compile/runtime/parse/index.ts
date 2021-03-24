@@ -11,6 +11,10 @@ function emitError(code: number, message?: string) {
   console.info('errorCode', code);
 }
 
+function emitWarn(code: number, message?: string) {
+  console.info('warnCode', code);
+}
+
 // 可以写一个parse errorCode枚举,将parse过程中 error抽离出来
 
 function parse(context: ParserContext, ancestors: AST[] = []) {
@@ -25,7 +29,7 @@ function parse(context: ParserContext, ancestors: AST[] = []) {
 
     if (s[0] === '<') {
       if (s.length === 1) {
-        emitError(1);
+        emitError(1, '不合法的标签');
       } else if (s[1] === '!') {
         // todo 可以支持下注释的解析, 注释的范式<!--xxx-->
         emitError(2);
@@ -36,7 +40,7 @@ function parse(context: ParserContext, ancestors: AST[] = []) {
         // 标签结束标识</xxx>
       } else {
         // 使用了不支持的符号, 无法识别
-        emitError(3);
+        emitError(3, '标签名错误');
       }
     } else {
       // todo 如果标签中使用了 &gt; &lt; 等方式写标签可以增加一个解析或者直接明确报错信息
@@ -76,7 +80,7 @@ function parseAttributes(context: ParserContext): Props[] {
 
   while (s.length > 0 && !s.startsWith('/>') && !s.startsWith('>')) {
     if (s.startsWith('/')) {
-      emitError(4, '属性中错误的放置了/符号, 程序已移动纠错, 需要改下');
+      emitWarn(0, '属性中错误的放置了/符号, 程序已自动纠错, 需要改下');
       removeToken(context, 1);
       removeSpaces(context);
       continue;
@@ -92,9 +96,9 @@ function parseAttributes(context: ParserContext): Props[] {
 }
 
 /**
- * 解析标签单个属性值
+ * 解析标签单个属性名&值
  * */
-function parseAttribute(context: ParserContext, propNames: Set<string>): Props {
+function parseAttribute(context: ParserContext, propNames: Set<string>): Props | void {
   const match = /^[^\s />][^\s/>=]*/.exec(context.source)!;
   const propName = match[0];
 
@@ -116,7 +120,7 @@ function parseAttribute(context: ParserContext, propNames: Set<string>): Props {
 
   removeToken(context, propName.length); // 删除已匹配过的propName
 
-  let value: undefined | PropValue;
+  let value: null | PropValue;
 
   if (/^[\s]*=/.test(context.source)) {
     // 匹配propValue
@@ -125,23 +129,39 @@ function parseAttribute(context: ParserContext, propNames: Set<string>): Props {
     removeSpaces(context);
 
     value = parseAttributeValue(context); // 解析属性值
-    if (!value) {
-      emitError(7, '属性值不能为空');
-    }
+  } else {
+    // TODO 只有一个propName, 则将propValue默认处理成true
+    value = true;
+  }
+
+  if (value === null) {
+    assert(false, '属性值不能为空');
   }
 
   return {
-    name: '',
+    name: propName,
     value: '',
   };
 }
 
-function parseAttributeValue(context: ParserContext): PropValue {
-  // content: string
-  // isQuoted: boolean
-  // loc: SourceLocation
-  console.info('context', context);
-  throw new Error('sss');
+function parseAttributeValue(context: ParserContext): PropValue | null {
+  const quoted = /^'|^"/.test(context.source) ? context.source[0] : null;
+
+  if (quoted) {
+    removeToken(context, 1);
+    const match = context.source.match(/[^/>]+((?=')|(?="))/);
+    if (match) {
+      return match[0];
+    } else {
+      if (context.source[0] === quoted) {
+        return '';
+      } else {
+        return null;
+      }
+    }
+  } else {
+    return null;
+  }
 }
 
 // 将指针指向<字符的位置, 切除无用字符
