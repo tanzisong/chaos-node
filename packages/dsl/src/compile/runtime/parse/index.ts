@@ -1,4 +1,4 @@
-import { AST, AstNode, ParserContext, Props, PropValue, SourceLocation, Tag } from './types';
+import { AST, AstNode, ParserContext, PropName, Props, PropValue, SourceLocation, Tag, Quoted } from './types';
 
 function assert(condition: boolean, msg?: string): never | true {
   if (!condition) {
@@ -8,7 +8,8 @@ function assert(condition: boolean, msg?: string): never | true {
 }
 
 function emitError(code: number, message?: string) {
-  console.info('errorCode', code);
+  console.info('errorCode', code, message);
+  throw new Error(String(code));
 }
 
 function emitWarn(code: number, message?: string) {
@@ -67,39 +68,44 @@ function parseTag(context: ParserContext, parent?: AST) {
 
   removeToken(context, match[0].length);
   removeSpaces(context);
-  parseAttributes(context);
+  const props = parseAttributes(context);
+  // todo
 }
 
 /**
  * 解析标签属性
  * */
 function parseAttributes(context: ParserContext): Props[] {
-  const { source: s } = context;
   const props: Props[] = [];
   const propNames = new Set<string>();
 
-  while (s.length > 0 && !s.startsWith('/>') && !s.startsWith('>')) {
-    if (s.startsWith('/')) {
+  while (context.source.length > 0 && !context.source.startsWith('/>') && !context.source.startsWith('>')) {
+    if (context.source.startsWith('/')) {
       emitWarn(0, '属性中错误的放置了/符号, 程序已自动纠错, 需要改下');
       removeToken(context, 1);
       removeSpaces(context);
       continue;
     }
 
-    const attr = parseAttribute(context, propNames);
-    break;
-    propNames.add(attr.name);
-    props.push(attr);
+    removeSpaces(context);
+    const prop = parseAttribute(context, propNames);
+    propNames.add(prop.name);
+    props.push(prop);
   }
-
+  console.info('props', props, '\n', JSON.parse(JSON.stringify(context)));
   return props;
 }
 
 /**
  * 解析标签单个属性名&值
  * */
-function parseAttribute(context: ParserContext, propNames: Set<string>): Props | void {
+function parseAttribute(context: ParserContext, propNames: Set<string>): Props {
   const match = /^[^\s />][^\s/>=]*/.exec(context.source)!;
+
+  if (!match) {
+    emitError(8, `正常情况下这里不应该报错, compile代码有问题, 场景没有枚举全\n${context.source}`);
+  }
+
   const propName = match[0];
 
   if (propNames.has(propName)) {
@@ -114,13 +120,14 @@ function parseAttribute(context: ParserContext, propNames: Set<string>): Props |
   }
 
   if (/["'<]/g.test(propName)) {
+    debugger;
     // 验证不合法的属性名
-    emitError(6, `属性名错误, 不能包含"'<\n${context.source}`);
+    emitError(7, `属性名错误, 不能包含"'<\n${context.source}`);
   }
 
   removeToken(context, propName.length); // 删除已匹配过的propName
 
-  let value: null | PropValue;
+  let value: PropValue | null;
 
   if (/^[\s]*=/.test(context.source)) {
     // 匹配propValue
@@ -130,7 +137,7 @@ function parseAttribute(context: ParserContext, propNames: Set<string>): Props |
 
     value = parseAttributeValue(context); // 解析属性值
   } else {
-    // TODO 只有一个propName, 则将propValue默认处理成true
+    // 只有一个propName, 则将propValue默认处理成true
     value = true;
   }
 
@@ -140,20 +147,34 @@ function parseAttribute(context: ParserContext, propNames: Set<string>): Props |
 
   return {
     name: propName,
-    value: '',
-  };
+    value,
+  } as Props;
 }
 
 function parseAttributeValue(context: ParserContext): PropValue | null {
-  const quoted = /^'|^"/.test(context.source) ? context.source[0] : null;
+  const quoted = /^['"]/.test(context.source) ? context.source[0] : null;
 
   if (quoted) {
-    removeToken(context, 1);
-    const match = context.source.match(/[^/>]+((?=')|(?="))/);
-    if (match) {
-      return match[0];
+    let match: RegExpMatchArray | null;
+
+    // 支持propsValue表达式
+    if (quoted === Quoted.single) {
+      // 匹配单引号包裹的字符
+      match = context.source.match(/(?<=')[^/>]+?(?=')/);
     } else {
-      if (context.source[0] === quoted) {
+      // 匹配双引号包裹的字符
+      match = context.source.match(/(?<=")[^/>]+?(?=")/);
+    }
+
+    if (match) {
+      // 正常匹配到value
+      const value = match[0];
+      removeToken(context, value.length + 2);
+      return value;
+    } else {
+      if (context.source[0] === quoted && context.source[1] === quoted) {
+        // 匹配到的value是空字符串
+        removeToken(context, 2);
         return '';
       } else {
         return null;

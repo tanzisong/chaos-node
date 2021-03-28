@@ -18,4 +18,4 @@ import pageXml from './template/layout/page.xml';
 
 const AST = parse(genContext(pageXml as string));
 
-console.info(AST);
+console.info('AST', AST);

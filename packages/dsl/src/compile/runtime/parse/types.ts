@@ -36,6 +36,9 @@ export interface Position {
   column: number;
 }
 
-const a = 1;
+enum Quoted {
+  single = "'",
+  double = '"',
+}
 
-export { a };
+export { Quoted };
