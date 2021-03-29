@@ -1,4 +1,4 @@
-export type Tag = string;
+type TagName = string;
 
 export type PropValue = string | true;
 export type PropName = string;
@@ -8,15 +8,12 @@ export interface Props {
   value: PropValue;
 }
 
-export interface AST {
+type AST = AstNode[];
+
+export interface AstNode {
   tag: string;
   props: Props[];
   children: AST[];
-}
-
-// todo 还不知道要写啥
-export interface AstNode {
-  [key: string]: any;
 }
 
 export interface ParserContext extends Position {
@@ -36,9 +33,21 @@ export interface Position {
   column: number;
 }
 
-enum Quoted {
+interface ElementNode {
+  tag: TagName;
+  props: Props[];
+  isSelfClosing: boolean;
+  children: AST;
+}
+
+const enum Quoted {
   single = "'",
   double = '"',
 }
 
-export { Quoted };
+const enum TagType {
+  Start,
+  End,
+}
+
+export { Quoted, AST, TagType, TagName, ElementNode };

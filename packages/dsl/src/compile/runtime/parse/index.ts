@@ -1,4 +1,4 @@
-import { AST, AstNode, ParserContext, PropName, Props, PropValue, SourceLocation, Tag, Quoted } from './types';
+import { AST, AstNode, ElementNode, ParserContext, Props, PropValue, Quoted, TagType } from './types';
 
 function assert(condition: boolean, msg?: string): never | true {
   if (!condition) {
@@ -16,11 +16,10 @@ function emitWarn(code: number, message?: string) {
   console.info('warnCode', code);
 }
 
-// 可以写一个parse errorCode枚举,将parse过程中 error抽离出来
+function parse(context: ParserContext, ancestors: AST = []) {
+  const nodes: AST = [];
 
-function parse(context: ParserContext, ancestors: AST[] = []) {
-  const nodes: AstNode[] = [];
-
+  // todo 是否需要在这里进行remove空格操作
   if (!isEnd(context, ancestors)) {
     const { source: s } = context;
 
@@ -55,21 +54,40 @@ function parse(context: ParserContext, ancestors: AST[] = []) {
 }
 
 // 解析节点
-function parseElement(context: ParserContext, ancestors: AST[]) {
+function parseElement(context: ParserContext, ancestors: AST) {
   const parent = last(ancestors);
-  const element = parseTag(context, parent);
+  const element = parseTag(context, TagType.Start, parent);
 }
 
 // 解析标签
-function parseTag(context: ParserContext, parent?: AST) {
-  const { source: s } = context;
-  const match = /^<\/?([a-z][^\s />]*)/i.exec(s)!;
+function parseTag(context: ParserContext, type: TagType, parent?: AstNode): ElementNode {
+  const match = /^<\/?([a-z][^\s />]*)/i.exec(context.source)!;
   const tag = match[1];
 
   removeToken(context, match[0].length);
   removeSpaces(context);
   const props = parseAttributes(context);
-  // todo
+  console.info('__parseTag__', props);
+
+  let isSelfClosing = false;
+  if (context.source.length === 0) {
+    emitError(9, `没有正确的关闭标签\n${context.source}`);
+  } else {
+    isSelfClosing = context.source.startsWith('/>');
+
+    if (type === TagType.End && isSelfClosing) {
+      emitError(10, `结束标签写错了\n${context.source}`);
+    }
+
+    removeToken(context, isSelfClosing ? 2 : 1);
+  }
+
+  return {
+    tag,
+    props,
+    isSelfClosing,
+    children: [],
+  };
 }
 
 /**
@@ -87,12 +105,12 @@ function parseAttributes(context: ParserContext): Props[] {
       continue;
     }
 
-    removeSpaces(context);
     const prop = parseAttribute(context, propNames);
     propNames.add(prop.name);
     props.push(prop);
+    removeSpaces(context);
   }
-  console.info('props', props, '\n', JSON.parse(JSON.stringify(context)));
+
   return props;
 }
 
@@ -238,7 +256,7 @@ function removeToken(context: ParserContext, numberOfCharacters: number): void {
 /**
  * 判断是否遇到结束标签</xxx>
  * */
-function isEnd(context: ParserContext, ancestors: AST[]) {
+function isEnd(context: ParserContext, ancestors: AST) {
   const s = context.source;
 
   if (s.startsWith('</')) {
