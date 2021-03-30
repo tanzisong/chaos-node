@@ -1,4 +1,5 @@
 type TagName = string;
+type TextData = string;
 
 export type PropValue = string | true;
 export type PropName = string;
@@ -33,13 +34,6 @@ export interface Position {
   column: number;
 }
 
-interface ElementNode {
-  tag: TagName;
-  props: Props[];
-  isSelfClosing: boolean;
-  children: AST;
-}
-
 const enum Quoted {
   single = "'",
   double = '"',
@@ -50,4 +44,4 @@ const enum TagType {
   End,
 }
 
-export { Quoted, AST, TagType, TagName, ElementNode };
+export { Quoted, AST, TagType, TagName, TextData };

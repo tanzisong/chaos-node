@@ -1,4 +1,4 @@
-import { AST, AstNode, ElementNode, ParserContext, Props, PropValue, Quoted, TagType } from './types';
+import { AST, AstNode, ParserContext, PropName, Props, PropValue, Quoted, TagName, TagType, TextData } from './types';
 
 function assert(condition: boolean, msg?: string): never | true {
   if (!condition) {
@@ -25,17 +25,18 @@ function parse(context: ParserContext, ancestors: AST = []) {
 
     assert(s.length > 0, '大概率解析器的isEnd方法没有将情况枚举全, 这里不应该报错的');
 
-    let node; // todo 补充类型
+    let node: AstNode | null = null; // todo 补充类型
+    let innerText: any = '';
 
     if (s[0] === '<') {
       if (s.length === 1) {
         emitError(1, '不合法的标签');
       } else if (s[1] === '!') {
         // todo 可以支持下注释的解析, 注释的范式<!--xxx-->
-        emitError(2);
+        emitError(2, '暂不支持注释');
       } else if (/[a-z]/i.test(s[1])) {
         // 节点名第一个字符只能是字母(不区分大小写)
-        parseElement(context, ancestors);
+        node = parseElement(context, ancestors);
       } else if (s[1] === '/') {
         // 标签结束标识</xxx>
       } else {
@@ -47,20 +48,31 @@ function parse(context: ParserContext, ancestors: AST = []) {
     }
 
     if (!node) {
-      // fixme 这里的parseText实际返回的是context, 需要修改parseText返回值
-      node = parseTagStart(context);
+      innerText = parseText(context);
     }
   }
 }
 
-// 解析节点
-function parseElement(context: ParserContext, ancestors: AST) {
+/**
+ * 解析节点
+ * */
+function parseElement(context: ParserContext, ancestors: AST): any {
   const parent = last(ancestors);
   const element = parseTag(context, TagType.Start, parent);
+
+  const { isSelfClosing, ...ASTNode } = element;
+
+  if (isSelfClosing) {
+    return element;
+  }
+
+  // push children
+  ancestors.push(ASTNode);
+  const children = parse(context, ancestors);
 }
 
 // 解析标签
-function parseTag(context: ParserContext, type: TagType, parent?: AstNode): ElementNode {
+function parseTag(context: ParserContext, type: TagType, parent?: AstNode): AstNode & { isSelfClosing: boolean } {
   const match = /^<\/?([a-z][^\s />]*)/i.exec(context.source)!;
   const tag = match[1];
 
@@ -95,7 +107,7 @@ function parseTag(context: ParserContext, type: TagType, parent?: AstNode): Elem
  * */
 function parseAttributes(context: ParserContext): Props[] {
   const props: Props[] = [];
-  const propNames = new Set<string>();
+  const propNames = new Set<PropName>();
 
   while (context.source.length > 0 && !context.source.startsWith('/>') && !context.source.startsWith('>')) {
     if (context.source.startsWith('/')) {
@@ -117,7 +129,7 @@ function parseAttributes(context: ParserContext): Props[] {
 /**
  * 解析标签单个属性名&值
  * */
-function parseAttribute(context: ParserContext, propNames: Set<string>): Props {
+function parseAttribute(context: ParserContext, propNames: Set<PropName>): Props {
   const match = /^[^\s />][^\s/>=]*/.exec(context.source)!;
 
   if (!match) {
@@ -169,6 +181,10 @@ function parseAttribute(context: ParserContext, propNames: Set<string>): Props {
   } as Props;
 }
 
+/**
+ * 解析prop value
+ * todo 还需要在写一个value编译器
+ * */
 function parseAttributeValue(context: ParserContext): PropValue | null {
   const quoted = /^['"]/.test(context.source) ? context.source[0] : null;
 
@@ -203,9 +219,9 @@ function parseAttributeValue(context: ParserContext): PropValue | null {
   }
 }
 
-// 将指针指向<字符的位置, 切除无用字符
 // todo 返回node还没写
-function parseTagStart(context: ParserContext) {
+function parseText(context: ParserContext) {
+  removeSpaces(context);
   const endToken = '<';
   const { source: s, originSource } = context;
   let endIndex = s.length;
@@ -215,9 +231,27 @@ function parseTagStart(context: ParserContext) {
     endIndex = index;
   }
 
-  assert(endIndex > 0, `template: ${s}\n parse失败 \n 解析前template为:${originSource}`);
+  const textData = parseTextData(context, endIndex);
+  console.info(textData, context);
+  // todo write here
+  throw new Error('text');
+
+  assert(endIndex > 0, `template: ${s}\n parseText失败 \n 解析前template为:${originSource}`);
 
   removeToken(context, endIndex);
+}
+
+function parseTextData(context: ParserContext, length: number): TextData {
+  const textData = context.source.slice(0, length);
+  removeToken(context, length);
+  const textMatch = textData.match(/[^\s][\S\s]+[^\s]/)!;
+
+  if (!textMatch) {
+    emitError(11, `parseTextData的正则考虑不完善\n${context}`);
+  }
+  removeSpaces(context);
+
+  return textMatch[0];
 }
 
 /**
