@@ -1,4 +1,4 @@
-import { AST, AstNode, ParserContext, PropName, Props, PropValue, Quoted, TagName, TagType, TextData } from './types';
+import { AST, AstNode, ParserContext, PropName, Props, PropValue, Quoted, TagType, TextData } from './types';
 
 function assert(condition: boolean, msg?: string): never | true {
   if (!condition) {
@@ -13,10 +13,10 @@ function emitError(code: number, message?: string) {
 }
 
 function emitWarn(code: number, message?: string) {
-  console.info('warnCode', code);
+  console.info('warnCode', code, message);
 }
-
-function parse(context: ParserContext, ancestors: AST = []) {
+//AST
+function parse(context: ParserContext, ancestors: AST = []): any {
   const nodes: AST = [];
 
   // todo 是否需要在这里进行remove空格操作
@@ -26,7 +26,7 @@ function parse(context: ParserContext, ancestors: AST = []) {
     assert(s.length > 0, '大概率解析器的isEnd方法没有将情况枚举全, 这里不应该报错的');
 
     let node: AstNode | null = null; // todo 补充类型
-    let innerText: any = '';
+    let innerText: TextData = ''; // innerText属于父组件的属性, 如果不存在父组件,则报错
 
     if (s[0] === '<') {
       if (s.length === 1) {
@@ -49,7 +49,18 @@ function parse(context: ParserContext, ancestors: AST = []) {
 
     if (!node) {
       innerText = parseText(context);
+      const length = ancestors.length;
+
+      if (!length) {
+        emitError(12, '文字节点不可单独存在');
+      }
+
+      const props = ancestors[length - 1].props;
+      props.innerText && emitWarn(1, `innerText属性和text节点重复, 默认innerText被覆盖`);
+      props.innerText = innerText;
     }
+
+    // TODO write here
   }
 }
 
@@ -57,8 +68,7 @@ function parse(context: ParserContext, ancestors: AST = []) {
  * 解析节点
  * */
 function parseElement(context: ParserContext, ancestors: AST): any {
-  const parent = last(ancestors);
-  const element = parseTag(context, TagType.Start, parent);
+  const element = parseTag(context, TagType.Start);
 
   const { isSelfClosing, ...ASTNode } = element;
 
@@ -69,17 +79,30 @@ function parseElement(context: ParserContext, ancestors: AST): any {
   // push children
   ancestors.push(ASTNode);
   const children = parse(context, ancestors);
+  ancestors.pop();
+
+  element.children = children;
+
+  if (startsWithEndTagOpen(context.source, element.tag)) {
+    parseTag(context, TagType.End);
+  } else {
+    emitError(13, `未正确闭合标签\n${context.source}`);
+  }
+
+  return element;
 }
 
 // 解析标签
-function parseTag(context: ParserContext, type: TagType, parent?: AstNode): AstNode & { isSelfClosing: boolean } {
+function parseTag(context: ParserContext, type: TagType): AstNode & { isSelfClosing: boolean } {
   const match = /^<\/?([a-z][^\s />]*)/i.exec(context.source)!;
+  if (!match) {
+    emitError(14, `标签名格式定义错误\n${context}`);
+  }
   const tag = match[1];
 
   removeToken(context, match[0].length);
   removeSpaces(context);
   const props = parseAttributes(context);
-  console.info('__parseTag__', props);
 
   let isSelfClosing = false;
   if (context.source.length === 0) {
@@ -88,7 +111,7 @@ function parseTag(context: ParserContext, type: TagType, parent?: AstNode): AstN
     isSelfClosing = context.source.startsWith('/>');
 
     if (type === TagType.End && isSelfClosing) {
-      emitError(10, `结束标签写错了\n${context.source}`);
+      emitError(10, `结束标签名写错了\n${context.source}`);
     }
 
     removeToken(context, isSelfClosing ? 2 : 1);
@@ -105,8 +128,8 @@ function parseTag(context: ParserContext, type: TagType, parent?: AstNode): AstN
 /**
  * 解析标签属性
  * */
-function parseAttributes(context: ParserContext): Props[] {
-  const props: Props[] = [];
+function parseAttributes(context: ParserContext): Props {
+  const props: Props = {};
   const propNames = new Set<PropName>();
 
   while (context.source.length > 0 && !context.source.startsWith('/>') && !context.source.startsWith('>')) {
@@ -117,9 +140,9 @@ function parseAttributes(context: ParserContext): Props[] {
       continue;
     }
 
-    const prop = parseAttribute(context, propNames);
-    propNames.add(prop.name);
-    props.push(prop);
+    const { name, value } = parseAttribute(context, propNames);
+    propNames.add(name);
+    props[name] = value;
     removeSpaces(context);
   }
 
@@ -129,7 +152,13 @@ function parseAttributes(context: ParserContext): Props[] {
 /**
  * 解析标签单个属性名&值
  * */
-function parseAttribute(context: ParserContext, propNames: Set<PropName>): Props {
+function parseAttribute(
+  context: ParserContext,
+  propNames: Set<PropName>,
+): {
+  name: PropName;
+  value: PropValue;
+} {
   const match = /^[^\s />][^\s/>=]*/.exec(context.source)!;
 
   if (!match) {
@@ -177,8 +206,8 @@ function parseAttribute(context: ParserContext, propNames: Set<PropName>): Props
 
   return {
     name: propName,
-    value,
-  } as Props;
+    value: value!,
+  };
 }
 
 /**
@@ -219,8 +248,7 @@ function parseAttributeValue(context: ParserContext): PropValue | null {
   }
 }
 
-// todo 返回node还没写
-function parseText(context: ParserContext) {
+function parseText(context: ParserContext): TextData {
   removeSpaces(context);
   const endToken = '<';
   const { source: s, originSource } = context;
@@ -231,14 +259,7 @@ function parseText(context: ParserContext) {
     endIndex = index;
   }
 
-  const textData = parseTextData(context, endIndex);
-  console.info(textData, context);
-  // todo write here
-  throw new Error('text');
-
-  assert(endIndex > 0, `template: ${s}\n parseText失败 \n 解析前template为:${originSource}`);
-
-  removeToken(context, endIndex);
+  return parseTextData(context, endIndex);
 }
 
 function parseTextData(context: ParserContext, length: number): TextData {
@@ -247,7 +268,7 @@ function parseTextData(context: ParserContext, length: number): TextData {
   const textMatch = textData.match(/[^\s][\S\s]+[^\s]/)!;
 
   if (!textMatch) {
-    emitError(11, `parseTextData的正则考虑不完善\n${context}`);
+    emitError(11, `可能因为parseTextData的正则考虑不完善\n${context}`);
   }
   removeSpaces(context);
 
@@ -288,20 +309,31 @@ function removeToken(context: ParserContext, numberOfCharacters: number): void {
 }
 
 /**
- * 判断是否遇到结束标签</xxx>
+ * 判断标签是否已经递归到结束标签
  * */
 function isEnd(context: ParserContext, ancestors: AST) {
   const s = context.source;
 
   if (s.startsWith('</')) {
-    return !!ancestors.find((node) => {
-      const tag = node.tag.toLowerCase();
-      const sourceTag = s.substring(2, tag.length + 2).toLowerCase();
-      return tag === sourceTag && /[\s>]/.test(s[2 + tag.length]);
-    });
+    for (let i = ancestors.length - 1; i >= 0; --i) {
+      if (startsWithEndTagOpen(s, ancestors[i].tag)) {
+        return true;
+      }
+    }
   }
 
   return !s;
+}
+
+/**
+ * 判断是否遇到结束标签</xxx>
+ * */
+function startsWithEndTagOpen(source: string, tag: string): boolean {
+  return (
+    source.startsWith('</') &&
+    source.substr(2, tag.length).toLowerCase() === tag.toLowerCase() &&
+    /[\t\r\n\f />]/.test(source[2 + tag.length] || '>')
+  );
 }
 
 function genContext(layout: string): ParserContext {

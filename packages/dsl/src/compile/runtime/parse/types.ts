@@ -4,17 +4,16 @@ type TextData = string;
 export type PropValue = string | true;
 export type PropName = string;
 
-export interface Props {
-  name: PropName;
-  value: PropValue;
+interface Props {
+  [key: string]: PropValue;
 }
 
 type AST = AstNode[];
 
 export interface AstNode {
   tag: string;
-  props: Props[];
-  children: AST[];
+  props: Props;
+  children: AST;
 }
 
 export interface ParserContext extends Position {
@@ -44,4 +43,4 @@ const enum TagType {
   End,
 }
 
-export { Quoted, AST, TagType, TagName, TextData };
+export { Quoted, AST, TagType, TagName, TextData, Props };
