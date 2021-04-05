@@ -15,7 +15,8 @@
 
 import { parse, genContext } from './compile/runtime/parse';
 import pageXml from './template/layout/page.xml';
+// import pageXml from './template/layout/multilayer.xml';
 
 const AST = parse(genContext(pageXml as string));
 
-console.info('AST', AST);
+console.info('AST', JSON.stringify(AST, null, 4));
