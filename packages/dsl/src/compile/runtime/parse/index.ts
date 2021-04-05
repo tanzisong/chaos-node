@@ -16,8 +16,7 @@ function emitWarn(code: number, message?: string) {
   console.info('warnCode', code, message);
 }
 
-//AST
-function parse(context: ParserContext, ancestors: AST = []): any {
+function parse(context: ParserContext, ancestors: AST = []): AST {
   const nodes: AST = [];
   let tagType = TagType.Start;
 
