@@ -13,19 +13,35 @@
     "bootstrap": "lerna bootstrap",
     "clean": "lerna clean -y",
     "serve": "lerna run serve --stream --scope",
-    "test": "a"
+    "test": "a",
+    "commit-verify": "node script/verifyCommit.js"
   },
   "bin": {
     "a": "./test.js"
   },
   "devDependencies": {
+    "chalk": "^4.1.0",
     "lerna": "^3.22.1",
+    "lint-staged": "^10.5.4",
     "prettier": "^2.1.2",
     "rollup": "^2.33.1",
     "tslib": "^2.0.3",
-    "typescript": "^4.0.5"
+    "typescript": "^4.0.5",
+    "yorkie": "^2.0.0"
   },
   "dependencies": {
     "lodash": "^4.17.20"
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged",
+    "commit-msg": "npm run commit-verify"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write"
+    ],
+    "*.ts?(x)": [
+      "prettier --parser=typescript --write"
+    ]
   }
 }
