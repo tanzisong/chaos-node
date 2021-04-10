@@ -11,7 +11,7 @@ const regCommitMsg = /(feat|fix|docs|dx|style|refactor|perf|test|workflow|build|
 
 if (!regCommitMsg.test(commitMsg)) {
   console.error(
-    `${chalk.red('commit信息格式错误')}${chalk.cyan('\n举例: \n<header-feat>(<header-scope>): <header-subject>\n<body>\n<footer>')}`,
+    `${chalk.red('commit信息格式错误')}${chalk.cyan('\n举例: \n<header-type>(<header-scope>): <header-subject>\n<body>\n<footer>')}`,
   );
   process.exit(1);
 }
