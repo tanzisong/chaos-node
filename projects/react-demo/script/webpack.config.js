@@ -1,6 +1,8 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const Webpackbar = require('webpackbar');
+const { HotModuleReplacementPlugin } = require('webpack');
 
 const HtmlConfig = require('../script/html-env');
 
@@ -12,17 +14,21 @@ module.exports = {
     filename: 'index.[chunkhash].js',
   },
   devServer: {
-    open: true,
+    open: false,
+    hot: true,
     host: 'localhost',
   },
   plugins: [
+    new Webpackbar({}),
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
+      cache: true,
       inject: true,
       title: HtmlConfig.title,
       favicon: HtmlConfig.icon,
       template: 'static/index.html',
     }),
+    new HotModuleReplacementPlugin(),
   ],
   module: {
     rules: [

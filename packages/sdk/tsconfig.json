@@ -17,7 +17,7 @@
     "baseUrl": ".",
     "rootDir": ".",
     "paths": {},
-    "types": ["jest"]
+    "types": ["jest", "reflect-metadata"]
   },
   "include": ["src/*", "global.d.ts"]
 }

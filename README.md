@@ -11,5 +11,4 @@ lerna add core --scope=demo 为demo包添加core包
 ```
 
 ```typescript
-// todo git commit hook
 ```

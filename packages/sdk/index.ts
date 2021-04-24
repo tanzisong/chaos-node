@@ -1,11 +1,8 @@
 // import { Core } from '@chaos/core';
-import { cloneDeep } from 'lodash-es';
+import 'reflect-metadata';
+import { myContainer } from './src/config';
+import { TYPES, Warrior } from './src/inversify';
 
-console.info(
-  cloneDeep({
-    name: '谭梓松',
-  }),
-);
+const ninja = myContainer.get<Warrior>(TYPES.Warrior);
 
-// Core.setNames('梓松');
-// console.info('sdk', Core.getNames());
+console.info(ninja.fight());
