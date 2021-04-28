@@ -1,4 +1,3 @@
-// import { Core } from '@chaos/core';
 import 'reflect-metadata';
 import { myContainer } from './src/config';
 import { TYPES, Warrior } from './src/inversify';

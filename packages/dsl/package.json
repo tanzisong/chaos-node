@@ -14,8 +14,8 @@
   },
   "author": "tanzisong920@163.com",
   "license": "ISC",
-  "dependencies": {
-    "vue": "^3.0.7"
+  "peerDependencies": {
+    "vue": ">=3.0.0"
   },
   "devDependencies": {
     "@rollup/plugin-alias": "^3.1.1",

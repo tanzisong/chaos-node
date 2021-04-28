@@ -5,7 +5,7 @@ import typescript from 'rollup-plugin-typescript2';
 import commonjs from '@rollup/plugin-commonjs';
 
 const fileName = 'chaos.sdk';
-// todo 代码压缩,开发|生产
+// todo 代码压缩/删除注释,开发|生产
 export default {
   input: './index.ts',
   output: [
