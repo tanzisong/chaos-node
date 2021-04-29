@@ -1,7 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const Webpackbar = require('webpackbar');
+const WebpackBar = require('webpackbar');
 const { HotModuleReplacementPlugin } = require('webpack');
 
 const HtmlConfig = require('../script/html-env');
@@ -19,7 +19,7 @@ module.exports = {
     host: 'localhost',
   },
   plugins: [
-    new Webpackbar({}),
+    new WebpackBar({}),
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       cache: true,
