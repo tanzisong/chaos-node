@@ -12,11 +12,13 @@ export default {
   output: [
     {
       file: `dist/lib/${fileName}.es5.js`,
+      name: 'chao-dsl',
       format: 'es',
       sourcemap: true,
     },
     {
       file: `dist/lib/${fileName}.umd.js`,
+      name: 'chao-dsl',
       format: 'umd',
       sourcemap: true,
     },

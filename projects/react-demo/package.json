@@ -1,7 +1,7 @@
 {
-  "name": "my-webpack-project",
+  "name": "react-demo",
   "version": "1.0.0",
-  "description": "My webpack project",
+  "description": "",
   "main": "index.js",
   "author": "tanzisong920@163.com",
   "license": "ISC",
@@ -38,6 +38,8 @@
     "webpackbar": "^5.0.0-3"
   },
   "dependencies": {
+    "@chaos/dsl": "^0.0.1",
+    "@chaos/sdk": "^0.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   }

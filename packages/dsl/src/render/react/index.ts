@@ -1,3 +1,1 @@
-import { AST } from '../../compile/runtime/parse/types';
-
-function ChaosRender(AST: AST) {}
+export { Render as ReactRender } from './render';

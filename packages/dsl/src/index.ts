@@ -13,10 +13,14 @@
 
 /* compile模块 */
 
-import { parse, genContext } from './compile/runtime/parse';
+import { parse, genContext } from './compile';
 import pageXml from './template/layout/page.xml';
-// import pageXml from './template/layout/multilayer.xml';
+import ReactXml from './template/layout/react.xml';
+import multilayerXml from './template/layout/multilayer.xml';
 
-const AST = parse(genContext(pageXml as string));
+const AST = parse(genContext(ReactXml as string));
 
 console.info('AST', JSON.stringify(AST, null, 4));
+
+export * from './render';
+export { AST };

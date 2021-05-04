@@ -11,11 +11,13 @@ export default {
   output: [
     {
       file: `dist/lib/${fileName}.es5.js`,
+      name: 'chao-sdk',
       format: 'es',
       sourcemap: true,
     },
     {
       file: `dist/lib/${fileName}.umd.js`,
+      name: 'chao-sdk',
       format: 'umd',
       sourcemap: true,
     },

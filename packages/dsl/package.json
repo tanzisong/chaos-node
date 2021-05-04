@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "private": false,
   "description": "Components that convert DSL(xml) to Vue",
-  "main": "index.ts",
+  "main": "dist/lib/chaos.dsl.es5.js",
   "typings": "index.ts",
-  "module": "index.ts",
+  "module": "dist/lib/chaos.dsl.es5.js",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "rollup -c rollup.config.ts",
@@ -15,8 +15,9 @@
   "author": "tanzisong920@163.com",
   "license": "ISC",
   "peerDependencies": {
+    "react": ">=17.0.0",
     "vue": ">=3.0.0",
-    "react": ">=17.0.0"
+    "@chaos/sdk": "*"
   },
   "devDependencies": {
     "@rollup/plugin-alias": "^3.1.1",
