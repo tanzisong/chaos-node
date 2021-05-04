@@ -8,6 +8,7 @@ const HtmlConfig = require('../script/html-env');
 
 module.exports = {
   mode: 'development',
+  target: 'web',
   entry: './src/index.tsx',
   output: {
     path: path.resolve(__dirname, '..', 'dist'),
