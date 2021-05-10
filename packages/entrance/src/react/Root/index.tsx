@@ -7,5 +7,6 @@ interface Props {
 
 export default function Index(props: Props) {
   const { children } = props;
-  return <div className="root">{children}</div>;
+  const a = null;
+  return <div className="root">{children || a}</div>;
 }

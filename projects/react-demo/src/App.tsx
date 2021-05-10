@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import Root from './components/Root/index';
+import Root from '../../../packages/entrance/src/react/Root/index';
 import { ReactRender, AST } from '@chaos/dsl';
 
 function Container(props: any) {
