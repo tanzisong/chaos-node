@@ -34,10 +34,13 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(tsx?|js)$/,
-        loader: 'babel-loader',
-        options: { cacheDirectory: true },
-        exclude: ['/node_modules/'],
+        test: /\.(xml)$/,
+        loader: path.resolve(__dirname, './string.js'),
+      },
+      {
+        test: /\.(tsx?)$/,
+        loader: 'ts-loader',
+        exclude: /node_modules/,
       },
       {
         test: /\.s[ac]ss$/i,

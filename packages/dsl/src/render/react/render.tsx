@@ -10,7 +10,7 @@ const getComponent: GetComponent = (name) => {
 };
 
 /**
- * 先序编译AST, 生成虚拟DOM tree
+ * 先序遍历AST, 生成react节点
  * */
 function RenderNode(node: AstNode): ReactNode {
   const { tag, children, props } = node;

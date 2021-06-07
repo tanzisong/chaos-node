@@ -14,9 +14,9 @@
 /* compile模块 */
 
 import { parse, genContext } from './compile';
-import pageXml from './template/layout/page.xml';
+// import pageXml from './template/layout/page.xml';
 import ReactXml from './template/layout/react.xml';
-import multilayerXml from './template/layout/multilayer.xml';
+// import multilayerXml from './template/layout/multilayer.xml';
 
 const AST = parse(genContext(ReactXml as string));
 

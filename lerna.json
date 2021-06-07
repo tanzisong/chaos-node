@@ -1,9 +1,10 @@
 {
-  "version": "0.0.1",
+  "version": "0.0.2",
   "packages": ["packages/*", "projects/*"],
   "command": {
     "bootstrap": {
-      "hoist": true
+      "hoist": true,
+      "npmClientArgs": ["--no-package-lock"]
     }
   }
 }

@@ -12,7 +12,6 @@ import babel from 'rollup-plugin-babel';
 const fileName = 'chaos.entrance';
 
 export default {
-  // input: 'src/react/Root/index.tsx',
   input: 'src/react/index.tsx',
   output: [
     {

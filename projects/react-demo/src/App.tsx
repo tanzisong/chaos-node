@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import Root from '../../../packages/entrance/src/react/Root/index';
+// import Root from '../../../packages/entrance/src/react/Root/index';
 import { ReactRender, AST } from '@chaos/dsl';
 
 function Container(props: any) {
@@ -14,7 +14,7 @@ const components = new Map<string, ReactNode>();
 components.set('Container', Container);
 components.set('Text', Text);
 
-console.info(ReactRender(AST, components));
+// console.info(ReactRender(AST, components));
 
 function App() {
   return <div className="App">{ReactRender(AST, components)}</div>;

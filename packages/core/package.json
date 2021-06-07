@@ -4,9 +4,9 @@
   "private": false,
   "author": "tzs",
   "description": "",
-  "main": "./src/index.ts",
-  "module": "./src/index.ts",
-  "typings": "./src/index.ts",
+  "main": "index.ts",
+  "module": "index.ts",
+  "typings": "index.ts",
   "scripts": {
     "build": "rollup -c rollup.config.ts"
   },

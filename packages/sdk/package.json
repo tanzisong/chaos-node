@@ -1,13 +1,13 @@
 {
   "name": "@chaos/sdk",
   "version": "0.0.1",
-  "private": false,
+  "private": true,
   "description": "tool library",
   "author": "tanzisong920@163.com",
   "license": "ISC",
-  "main": "dist/lib/chaos.sdk.es5.js",
+  "main": "index.ts",
   "typings": "index.ts",
-  "module": "dist/lib/chaos.sdk.es5.js",
+  "module": "index.ts",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "rollup -c rollup.config.ts",
