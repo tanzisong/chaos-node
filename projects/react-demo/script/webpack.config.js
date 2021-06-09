@@ -1,8 +1,10 @@
+const cpus = require('os').cpus();
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const WebpackBar = require('webpackbar');
 const { HotModuleReplacementPlugin } = require('webpack');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const HtmlConfig = require('../script/html-env');
 
@@ -30,6 +32,12 @@ module.exports = {
       template: 'static/index.html',
     }),
     new HotModuleReplacementPlugin(),
+    new ForkTsCheckerWebpackPlugin({
+      async: true,
+      typescript: {
+        configFile: 'tsconfig.json',
+      },
+    }),
   ],
   module: {
     rules: [
@@ -38,9 +46,34 @@ module.exports = {
         loader: path.resolve(__dirname, './string.js'),
       },
       {
-        test: /\.(tsx?)$/,
-        loader: 'ts-loader',
-        exclude: /node_modules/,
+        test: /\.(tsx?|js)$/,
+        exclude: ['/node_modules/'],
+        use: [
+          {
+            loader: 'cache-loader',
+          },
+          {
+            loader: 'thread-loader',
+            options: {
+              workers: cpus - 1,
+            },
+          },
+          {
+            loader: 'babel-loader',
+            options: {
+              babelrc: false,
+              extends: path.resolve(__dirname, '.babelrc'),
+            },
+          },
+          {
+            loader: 'ts-loader',
+            options: {
+              happyPackMode: true,
+              projectReferences: true,
+              transpileOnly: true,
+            },
+          },
+        ],
       },
       {
         test: /\.s[ac]ss$/i,

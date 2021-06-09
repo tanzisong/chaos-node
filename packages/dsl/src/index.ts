@@ -18,7 +18,7 @@ import { parse, genContext } from './compile';
 import ReactXml from './template/layout/react.xml';
 // import multilayerXml from './template/layout/multilayer.xml';
 
-const AST = parse(genContext(ReactXml as string));
+const AST = parse(genContext(ReactXml));
 
 console.info('AST', JSON.stringify(AST, null, 4));
 

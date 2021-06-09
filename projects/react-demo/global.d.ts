@@ -1,1 +1,1 @@
-declare module '*.xml' {}
+declare module '*.xml';

@@ -13,8 +13,8 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
-    "typeRoots": ["./node_modules/@types", "../../node_modules/@types","./global.d.ts"],
+    "typeRoots": ["./node_modules/@types", "../../node_modules/@types", "./global"],
     "jsx": "react"
   },
-  "exclude": ["node_modules/**"]
+  "exclude": ["node_modules", "dist"]
 }

@@ -7,10 +7,8 @@
     "module": "es6",
     "target": "es5",
     "allowJs": true,
-    "jsx": "react",
+    "jsx": "preserve",
     "typeRoots": ["./node_modules/@types", "../../node_modules/@types", "./global.d.ts"]
   },
-  "files": ["src/index.tsx"],
-  "exclude": ["node_modules", "dist"],
-  "include": ["*"]
+  "exclude": ["node_modules", "dist"]
 }
