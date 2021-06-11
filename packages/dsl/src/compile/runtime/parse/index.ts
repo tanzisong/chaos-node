@@ -1,4 +1,5 @@
 import { AST, AstNode, ParserContext, PropName, Props, PropValue, Quoted, TagType, TextData } from './types';
+import { removeKeyFromObj } from '@chaos/sdk';
 
 function assert(condition: boolean, msg?: string): never | true {
   if (!condition) {
@@ -92,7 +93,7 @@ function parseElement(context: ParserContext, ancestors: AST): AstNode {
     emitError(13, `未正确闭合标签\n${context.source}`);
   }
 
-  return removeKeyFromObj(element, ['isSelfClosing']) as AstNode;
+  return removeKeyFromObj(element, ['isSelfClosing']);
 }
 
 // 解析标签
@@ -350,19 +351,6 @@ function genContext(layout: string): ParserContext {
     line: 1,
     column: 1,
   };
-}
-
-// todo 目前泛型推断错误
-function removeKeyFromObj<T extends Record<string, any>, U extends (keyof T)[]>(obj: T, removeKeyArr: U) {
-  return Object.entries(obj).reduce((p, n) => {
-    if (!removeKeyArr.includes(n[0])) {
-      return {
-        ...p,
-        [n[0]]: n[1],
-      };
-    }
-    return p;
-  }, {});
 }
 
 export { parse, genContext };

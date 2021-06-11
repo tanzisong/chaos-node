@@ -6,4 +6,4 @@
 //
 // console.info(ninja.fight());
 
-export { uniqueKey } from './src';
+export * from './src';
