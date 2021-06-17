@@ -3,6 +3,8 @@
 // todo vue component register by The environment variable to return different register
 import { ReactNode } from 'react';
 import { injectable } from 'inversify';
+import { isFunction } from 'lodash-es';
+import { SDK } from '../index';
 
 @injectable()
 class Component {
@@ -25,4 +27,15 @@ class Component {
   }
 }
 
-export { Component };
+function registerComponent(Component: Record<string, ReactNode>) {
+  Object.entries(Component).forEach((component) => {
+    if (!isFunction(component[1])) {
+      throw new Error(`registerComponent error: ${component[0]}is not an react function`);
+    }
+    SDK.component.set(component[0], component[1]);
+  });
+
+  return SDK.component.getAll();
+}
+
+export { Component, registerComponent };

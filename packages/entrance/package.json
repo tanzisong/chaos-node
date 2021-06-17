@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "应用层",
   "main": "index.ts",
+  "module": "index.ts",
+  "typings": "index.ts",
   "author": "tanzisong920@163.com",
   "license": "ISC",
   "scripts": {

@@ -15,12 +15,12 @@
 
 import { parse, genContext } from './compile';
 // import pageXml from './template/layout/page.xml';
-import ReactXml from './template/layout/react.xml';
+import ReactXml from './template/layout/page.xml';
 // import multilayerXml from './template/layout/multilayer.xml';
 
 const AST = parse(genContext(ReactXml));
 
-console.info('AST', JSON.stringify(AST, null, 4));
+console.info('AST', AST);
 
 export * from './render';
 export { AST };

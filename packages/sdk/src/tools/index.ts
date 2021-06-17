@@ -22,4 +22,10 @@ function removeKeyFromObj<T extends Record<string, any>, U extends keyof T>(
   }, {});
 }
 
-export { uniqueKey, removeKeyFromObj };
+function upperFirstLetter(name: string) {
+  return name.replace(/\w/, ($0) => {
+    return $0.toUpperCase();
+  });
+}
+
+export { uniqueKey, removeKeyFromObj, upperFirstLetter };

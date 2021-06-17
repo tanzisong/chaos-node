@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { AstNode, TagName, AST } from '../../compile/runtime/parse/types';
-import { uniqueKey } from '@chaos/sdk';
+import { uniqueKey, upperFirstLetter } from '@chaos/sdk';
 
 let components: Map<string, ReactNode>;
 
@@ -16,8 +16,7 @@ function RenderNode(node: AstNode): ReactNode {
   const { tag, children, props } = node;
   const key = uniqueKey();
 
-  const Component = getComponent(tag);
-  console.info('Component', Component, tag, components);
+  const Component = getComponent(upperFirstLetter(tag));
   return (
     <Component {...props} key={key}>
       {children
