@@ -3,6 +3,7 @@
     "name": "tanzisong",
     "email": "tanzisong920@163.com"
   },
+  "description": "low-code project, made by tanzisong920@163.com",
   "name": "chaos",
   "private": true,
   "workspaces": [
