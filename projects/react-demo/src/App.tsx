@@ -9,9 +9,7 @@ function App() {
 
   useEffect(() => {
     InitSystem()
-      .then((_) => {
-        setStatus(true);
-      })
+      .then((_) => setStatus(true))
       .catch((err) => {
         throw Error(`初始化错误: ${err}`);
       });

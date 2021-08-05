@@ -15,11 +15,13 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, '..', 'dist'),
     filename: 'index.[chunkhash].js',
+    publicPath: '/',
   },
   devServer: {
     open: false,
     hot: true,
     host: 'localhost',
+    historyApiFallback: true,
   },
   plugins: [
     new WebpackBar({}),

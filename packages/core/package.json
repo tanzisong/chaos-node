@@ -17,6 +17,8 @@
     "rollup-plugin-typescript2": "^0.29.0"
   },
   "dependencies": {
-    "lodash.camelcase": "^4.3.0"
+    "history": "^5.0.0",
+    "lodash.camelcase": "^4.3.0",
+    "rxjs": "^7.2.0"
   }
 }

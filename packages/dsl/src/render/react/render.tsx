@@ -31,7 +31,6 @@ function RenderNode(node: AstNode): ReactNode {
 function Render(AST: AST, component: Map<string, ReactNode>) {
   components = component;
   // todo 校验error/warn判断
-  console.info(AST);
   return <>{AST.map((Node) => RenderNode(Node))}</>;
 }
 

@@ -20,7 +20,5 @@ import ReactXml from './template/layout/page.xml';
 
 const AST = parse(genContext(ReactXml));
 
-console.info('AST', AST);
-
 export * from './render';
 export { AST };
