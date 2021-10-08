@@ -39,9 +39,25 @@ import {
   find,
   skip,
   mergeMap,
+  switchMap,
+  pipe,
+  SchedulerLike,
+  SchedulerAction,
+  observeOn,
+  asapScheduler,
+  share,
+  shareReplay,
+  animationFrameScheduler,
+  mergeAll,
+  sampleTime,
+  mapTo,
+  expand,
+  groupBy,
+  toArray,
   // concatAll,
 } from 'rxjs';
 import {
+  reduce,
   throttleTime,
   bufferCount,
   bufferTime,
@@ -472,18 +488,27 @@ function combineLatest_operator() {
   const subject2$$ = new Subject<string>();
   const subject2$ = subject2$$.asObservable();
 
-  subject1$.pipe(combineLatestWith(subject2$)).subscribe((v) => {
-    console.info(v);
+  subject1$.subscribe((v) => {
+    console.info('v1', v);
+  });
+
+  subject1$.subscribe((v) => {
+    console.info('v2', v);
+  });
+  console.info('subject1$$.observers', subject1$$.observers);
+  [...subject1$$.observers].forEach((ob) => {
+    console.info('ob', ob);
+    ob.complete();
   });
 
   subject1$$.next('v1-1');
   setTimeout(() => {
     subject1$$.next('v1-2');
   }, 0);
-  subject2$$.next('v2-1');
-  Promise.resolve().then((_) => {
-    subject2$$.next('v2-2');
-  });
+  // subject2$$.next('v2-1');
+  // Promise.resolve().then((_) => {
+  //   subject2$$.next('v2-2');
+  // });
 }
 
 function pluck_operator() {
@@ -548,10 +573,18 @@ function merge_operator() {
 function pairwise_operator() {
   const clickCount$ = fromEvent<MouseEvent>(document, 'click').pipe(
     scan((p) => {
-      if (!p) return '1';
+      if (!p) {
+        return '1';
+      }
       return p + '-1';
     }, ''),
+    startWith(null),
   );
+
+  clickCount$.pipe(pairwise()).subscribe((value) => {
+    console.info('value', value);
+  });
+  return;
   const interval$ = interval(2000).pipe(take(3));
 
   clickCount$.pipe(combineLatestWith(interval$), pairwise()).subscribe((v) => {
@@ -633,7 +666,7 @@ function debounce_operator() {
  * */
 function first_operator() {
   const number$ = of(1, 2, 3);
-  const input$$ = new Subject();
+  const input$$ = new Subject<number>();
 
   input$$
     .pipe(
@@ -650,14 +683,21 @@ function first_operator() {
     .pipe(take(50))
     .subscribe((v) => {
       input$$.next(v);
-      // if (v === 3) {
-      //   input$$.complete();
-      // }
+      if (v === 3) {
+        input$$.complete();
+      }
     });
 
-  input$$.pipe(last()).subscribe((v) => {
-    console.info('v_last', v);
-  });
+  input$$
+    .pipe(
+      last((value) => {
+        console.info('last_value', value);
+        return value >= 4;
+      }, 'last的默认值'),
+    )
+    .subscribe((v) => {
+      console.info('v_last', v);
+    });
 }
 
 function mergeMap_operator() {
@@ -706,6 +746,256 @@ function find_operator() {
 }
 
 /**
+ * switchMap解决竞速问题
+ * */
+function switchMap_operator() {
+  const timer$ = interval(500).pipe(take(3)); // 模拟用户输入
+
+  timer$
+    .pipe(
+      switchMap((input) => {
+        console.info('input', input);
+        // Observable模拟server请求
+        return new Observable((subscriber) => {
+          subscriber.next(input);
+        }).pipe(delay(1000));
+      }),
+      map((value) => {
+        console.info('value是什么?', value);
+        return `server: ${value}`;
+      }),
+    )
+    .subscribe((v) => {
+      console.info('最终服务端返回的结果', v);
+    });
+}
+
+/**
+ * 验证hot Observable通过操作符结合组合后的冷热性
+ * */
+function coldOrHotObservable() {
+  const number$$ = new BehaviorSubject(1);
+  const number$ = number$$.asObservable();
+
+  const string$$ = new BehaviorSubject('1');
+  const string$ = string$$.asObservable();
+
+  const stringNumberObservable$ = zip(number$, string$).pipe(
+    map((value) => {
+      console.info('经过了map', value);
+      return {
+        string: value[0],
+        number: value[1],
+      };
+    }),
+  );
+
+  stringNumberObservable$.subscribe((v) => {
+    console.info('v1', v);
+  });
+
+  stringNumberObservable$.subscribe((v) => {
+    console.info('v2', v);
+  });
+
+  setTimeout(() => {
+    console.info('2s');
+    number$$.next(2);
+    string$$.next('2');
+
+    stringNumberObservable$.subscribe((v) => {
+      console.info('v3', v);
+    });
+  }, 2000);
+}
+
+/**
+ * share操作符(还是在探寻hot and hot Observable问题)
+ * */
+function share_operator() {
+  const ob1$ = new Observable((ob) => {
+    console.info('ob1内部');
+    ob.next(1);
+  });
+  const ob2$ = new Observable((ob) => {
+    console.info('ob2内部');
+    ob.next(2);
+  });
+  const zip$ = zip(ob1$, ob2$).pipe(shareReplay(1));
+
+  const sub1 = zip$.subscribe((v) => {
+    console.info('v1', v);
+  });
+  sub1.unsubscribe();
+  console.info(sub1.closed);
+
+  setTimeout(() => {
+    console.info('2秒了');
+    zip$.subscribe((v) => {
+      console.info('v2', v);
+    });
+  }, 2000);
+
+  const source1$$ = new Subject();
+  const source2$$ = new Subject();
+
+  const zip$$ = zip(source1$$, source2$$).pipe(shareReplay(2));
+
+  zip$$.subscribe((v) => {
+    // console.info('v1', v);
+  });
+
+  setTimeout(() => {
+    // console.info('2秒了');
+    zip$$.subscribe((v) => {
+      // console.info('v2', v);
+    });
+  }, 2000);
+
+  source1$$.next(1);
+  source2$$.next(2);
+  source1$$.next(3);
+  source2$$.next(4);
+}
+
+function share_timer_operator() {
+  const interval$ = interval(2000).pipe(take(3), shareReplay(1));
+
+  interval$.subscribe((value) => {
+    console.info('v1', value);
+  });
+
+  timer(3000).subscribe((_) => {
+    interval$.subscribe((value) => {
+      console.info('v2', value);
+    });
+  });
+}
+
+/**
+ * 调度器
+ * */
+function Schedule() {
+  // observeOn
+  // SchedulerLike
+  // SchedulerAction
+  const Ob = new Observable((subscriber) => {
+    subscriber.next(1);
+    subscriber.next(2);
+    subscriber.next(3);
+    subscriber.complete();
+  }).pipe(observeOn(animationFrameScheduler));
+
+  const start = new Date().getTime();
+  console.info('before');
+  Ob.subscribe((v) => {
+    const end = new Date().getTime();
+    console.info('v', end - start);
+  });
+  console.info('after');
+}
+
+/**
+ * 高阶操作符
+ * */
+function mergeAll_operator() {
+  const click$ = fromEvent(window, 'click').pipe(map((value) => interval(1000).pipe(take(5))));
+
+  click$.pipe(mergeAll(2)).subscribe((value) => {
+    console.info('value', value);
+  });
+}
+
+/**
+ * 对发出的值采样
+ * */
+function sample_operator() {
+  const click$ = fromEvent(window, 'click');
+
+  click$.pipe(sampleTime(2000)).subscribe((value) => {
+    console.info('value', value);
+  });
+}
+
+/**
+ * 递归调用
+ * */
+function expand_operator() {
+  const click$ = fromEvent(window, 'click');
+
+  click$
+    .pipe(
+      mapTo(1),
+      expand((value) => {
+        return of(value + 1).pipe(delay(1000));
+      }),
+      take(3),
+    )
+    .subscribe(
+      (value) => {
+        console.info('value', value);
+      },
+      (error) => {},
+      () => {
+        console.info('完成了');
+      },
+    );
+}
+
+/**
+ * 将流的值分组
+ * */
+function groupBy_operator() {
+  // of(
+  //   { id: 1, name: 'JavaScript' },
+  //   { id: 2, name: 'Parcel' },
+  //   { id: 2, name: 'webpack' },
+  //   { id: 1, name: 'TypeScript' },
+  //   { id: 3, name: 'TSLint' },
+  // )
+  //   .pipe(
+  //     groupBy((p) => p.id),
+  //     mergeMap((group$) => group$.pipe(reduce((acc, cur) => [...acc, cur], []))),
+  //   )
+  //   .subscribe((p) => console.log(p));
+  // return;
+  const source$$ = new Subject();
+  source$$
+    .pipe(
+      groupBy((value: any) => {
+        return value.name;
+      }),
+      mergeMap((group) => {
+        return group.pipe(toArray());
+      }),
+    )
+    .subscribe((v) => {
+      console.info('v', v);
+    });
+
+  source$$.next([
+    {
+      name: 'a',
+      age: '1',
+    },
+    {
+      name: 'b',
+      age: '2',
+    },
+    {
+      name: 'c',
+      age: '3',
+    },
+    {
+      name: 'c',
+      age: '4',
+    },
+  ]);
+
+  source$$.complete();
+}
+
+/**
  * 函数调用-便于搜索代码
  * */
 // move();
@@ -735,7 +1025,21 @@ function find_operator() {
 // distinctUntilChanged_operator();
 // debounce_operator();
 // first_operator();
-mergeMap_operator();
+// mergeMap_operator();
+// switchMap_operator();
 // find_operator();
+
+// coldOrHotObservable();
+// share_operator();
+// share_timer_operator();
+// Schedule();
+//observeOn
+// SchedulerLike
+// SchedulerAction
+
+// mergeAll_operator();
+// sample_operator();
+// expand_operator();
+groupBy_operator();
 
 export { history };

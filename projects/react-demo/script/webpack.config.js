@@ -79,11 +79,32 @@ module.exports = {
       },
       {
         test: /\.s[ac]ss$/i,
-        use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'],
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true,
+              importLoaders: 1,
+            },
+          },
+          'postcss-loader',
+          'sass-loader',
+        ],
       },
       {
         test: /\.css$/i,
-        use: ['style-loader', 'css-loader', 'postcss-loader'],
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true,
+              importLoaders: 1,
+            },
+          },
+          'postcss-loader',
+        ],
       },
       {
         test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/,
