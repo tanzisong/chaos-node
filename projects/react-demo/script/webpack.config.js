@@ -14,7 +14,7 @@ module.exports = {
   entry: './src/index.tsx',
   output: {
     path: path.resolve(__dirname, '..', 'dist'),
-    filename: 'index.[chunkhash].js',
+    filename: 'js/index.[chunkhash].js',
     publicPath: '/',
   },
   devServer: {
@@ -22,6 +22,27 @@ module.exports = {
     hot: true,
     host: 'localhost',
     historyApiFallback: true,
+  },
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      maxSize: 40000,
+      cacheGroups: {
+        react: {
+          chunks: 'all',
+          name: `react`,
+          test: /[\\/]react[\\/]/,
+          priority: 0,
+          maxSize: 40000,
+        },
+        default: {
+          maxSize: 40000,
+          chunks: 'all',
+          name: 'common',
+          priority: -1,
+        },
+      },
+    },
   },
   plugins: [
     new WebpackBar({}),
@@ -84,7 +105,9 @@ module.exports = {
           {
             loader: 'css-loader',
             options: {
-              modules: true,
+              modules: {
+                localIdentName: '[local]__[hash:base64:5]',
+              },
               importLoaders: 1,
             },
           },
@@ -99,7 +122,9 @@ module.exports = {
           {
             loader: 'css-loader',
             options: {
-              modules: true,
+              modules: {
+                localIdentName: '[local]__[hash:base64:5]',
+              },
               importLoaders: 1,
             },
           },

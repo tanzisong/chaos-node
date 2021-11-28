@@ -1,5 +1,5 @@
 const config = {
-  title: 'react-demo',
+  title: 'React-Chaos',
   icon: 'static/icon.jpeg',
 };
 

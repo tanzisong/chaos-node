@@ -15,7 +15,9 @@ function Render() {
         </div>
       </div>
 
-      <div className={s.right}>1</div>
+      <div className={s.right}>
+        <div className="p-20 w-auto">这里使用了Tailwind css</div>
+      </div>
     </div>
   );
 }
