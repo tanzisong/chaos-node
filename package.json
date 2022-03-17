@@ -1,0 +1,39 @@
+{
+  "name": "@byteinspire-template/koa",
+  "version": "0.0.7",
+  "license": "ISC",
+  "scripts": {
+    "compile": "tsc -w",
+    "dev": "inspirecloud dev",
+    "predeploy": "tsc",
+    "deploy": "inspirecloud deploy"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "repository": {},
+  "dependencies": {
+    "@babel/core": "^7.17.7",
+    "@babel/generator": "^7.17.7",
+    "@babel/parser": "^7.17.7",
+    "@babel/preset-env": "^7.16.11",
+    "@byteinspire/inspirecloud-api": "*",
+    "@koa/router": "^8.0.2",
+    "axios": "^0.26.0",
+    "koa": "^2.11.0",
+    "koa-body": "^4.1.1",
+    "koa-static": "^5.0.0",
+    "typescript": "^4.6.2"
+  },
+  "devDependencies": {
+    "@types/babel__core": "^7.1.18",
+    "@types/koa__router": "^8.0.11",
+    "@types/koa-static": "^4.0.2"
+  },
+  "files": [
+    "*",
+    "!.*",
+    ".gitignore"
+  ]
+}

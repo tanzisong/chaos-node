@@ -1,0 +1,14 @@
+{
+  "tag": "div",
+  "props": {},
+  "children": [
+    {
+      "tag": "text",
+      "props": {
+        "script1": "(() => { const arr = [1,2,3]; const bbb = [...arr, ...[4,5,6]]; console.info(bbb);  })()",
+        "script2": "this.data.ifShow"
+      },
+      "children": []
+    }
+  ]
+}
