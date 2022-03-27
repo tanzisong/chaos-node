@@ -1,3 +1,7 @@
 type JsonPath = string | number;
 
-export { JsonPath }
+type ExtraConfig = {
+  polyfillCode: string
+}
+
+export { JsonPath, ExtraConfig }
