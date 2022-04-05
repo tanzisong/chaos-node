@@ -1,5 +1,5 @@
 import axios from "axios";
-import {Methods, ResourceLibraryLists, Level} from "../config/index"
+import {Methods, ResourceLibraryLists, Level} from '../config'
 
 /**
  * Service是业务具体实现, 由Controller或其他Service调用

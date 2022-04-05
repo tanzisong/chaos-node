@@ -27,7 +27,7 @@ class Compile {
   constructor() {
   }
   
-  private Run(xmlString: string) {
+  public Run(xmlString: string) {
     /**
      * for test
      * const xmlString = fs.readFileSync(path.resolve(__dirname, '../../../public/xml/', 'test.xml'), {
@@ -35,12 +35,15 @@ class Compile {
      * });
      * */
     
+    /** 获取xml对应json结构 */
     const compiledJson = this.compileXml(xmlString);
+    
+    /** 从json结构中获取props value表达式 */
     const expressionsMaps = this.getExpressionFromAst(compiledJson);
     // 标准xml支持是单root节点, 这里按照标准来处理
     const expressionsMap = expressionsMaps[0];
     
-    // 创建json extra配置对象
+    /** 构造json extra配置对象 */
     const extraConfig: ExtraConfig = {
       polyfillCode: '',
     };
@@ -76,6 +79,7 @@ class Compile {
         presets: ['@babel/preset-env'],
       });
     const transformedAST = parse(transformedCode).program.body;
+    
     /**
      * 根据原表达式个数, 从parse结果中分离polyfill函数
      * */
@@ -134,6 +138,7 @@ class Compile {
   public compileXml(xml: string) {
     let json: AST;
     try {
+      console.info("xml", xml);
       json = xmlParser(genContext(xml));
     } catch (e: any) {
       throw new Error(`${CompileErrorCode.compileXml}\n${e.message}`);
