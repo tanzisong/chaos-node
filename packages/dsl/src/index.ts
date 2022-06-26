@@ -14,11 +14,14 @@
 /* compile模块 */
 
 import { parse, genContext } from './compile';
-// import pageXml from './template/layout/page.xml';
+// import ReactXml from './template/layout/index.xml';
 import ReactXml from './template/layout/page.xml';
-// import multilayerXml from './template/layout/multilayer.xml';
+// import ReactXml from './template/layout/multilayer.xml';
+// import ReactXml from './template/layout/react.xml';
 
-const AST = parse(genContext(ReactXml));
+const AST = parse(
+  genContext(`<text script="(() => { console.info('啦啦啦') })()" tesst="sssss">sssss</text>`),
+);
 
 export * from './render';
 export { AST };

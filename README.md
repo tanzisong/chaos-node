@@ -13,5 +13,16 @@
 - row 于 col 组合图形必须是矩形
 - row&col 存在固定位置的属性(stick=top/bottom/left/right)
 - row&col 存在 space 间隔属性(space 只能存在相对值), 一行或一列每个 item 的宽高=总相对&绝对值数值-space 总值
+- 优先将行铺满
 - TODO: space&span&width&height 可以表达式动态计算出结果, 其中依赖项动态变化, 可导致结果值动态变化
 -
+
+### chaos 表单联动系统
+
+```ts
+/**
+ * 表单支持字段间联动
+ * 联动语句范式 todo
+ *  联动语句需定义为expression形式, 理论上支持全集ES, 包括高级or最新ES语法, 语法会在编译阶段转义 todo: 编译脚本
+ * */
+```

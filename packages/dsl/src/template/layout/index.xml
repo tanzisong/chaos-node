@@ -1,0 +1,14 @@
+<Main width="100%" height="100%">
+    <block col="12" row="2">
+        <header />
+    </block>
+    <block col="2" row="8">
+        <menu />
+    </block>
+    <block col="10" row="8">
+        <content />
+    </block>
+    <block col="12" row="2">
+        <bottom />
+    </block>
+</Main>

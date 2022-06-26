@@ -1,4 +1,14 @@
-import { AST, AstNode, ParserContext, PropName, Props, PropValue, Quoted, TagType, TextData } from './types';
+import {
+  AST,
+  AstNode,
+  ParserContext,
+  PropName,
+  Props,
+  PropValue,
+  Quoted,
+  TagType,
+  TextData,
+} from './types';
 import { removeKeyFromObj } from '@chaos/sdk';
 
 function assert(condition: boolean, msg?: string): never | true {
@@ -89,7 +99,6 @@ function parseElement(context: ParserContext, ancestors: AST): AstNode {
   if (startsWithEndTagOpen(context.source, element.tag)) {
     parseTag(context, TagType.End);
   } else {
-    debugger;
     emitError(13, `未正确闭合标签\n${context.source}`);
   }
 
@@ -137,7 +146,11 @@ function parseAttributes(context: ParserContext): Props {
   const props: Props = {};
   const propNames = new Set<PropName>();
 
-  while (context.source.length > 0 && !context.source.startsWith('/>') && !context.source.startsWith('>')) {
+  while (
+    context.source.length > 0 &&
+    !context.source.startsWith('/>') &&
+    !context.source.startsWith('>')
+  ) {
     if (context.source.startsWith('/')) {
       emitWarn(0, '属性中错误的放置了/符号, 程序已自动纠错, 需要改下');
       removeToken(context, 1);
@@ -184,7 +197,6 @@ function parseAttribute(
   }
 
   if (/["'<]/g.test(propName)) {
-    debugger;
     // 验证不合法的属性名
     emitError(7, `属性名错误, 不能包含"'<\n${context.source}`);
   }
@@ -221,17 +233,16 @@ function parseAttribute(
  * */
 function parseAttributeValue(context: ParserContext): PropValue | null {
   const quoted = /^['"]/.test(context.source) ? context.source[0] : null;
-
   if (quoted) {
     let match: RegExpMatchArray | null;
 
     // 支持propsValue表达式
     if (quoted === Quoted.single) {
       // 匹配单引号包裹的字符
-      match = context.source.match(/(?<=')[^/>]*?(?=')/);
+      match = context.source.match(/(?<=')[^/>]*?.*?(?=')/);
     } else {
       // 匹配双引号包裹的字符
-      match = context.source.match(/(?<=")[^/>]*?(?=")/);
+      match = context.source.match(/(?<=")[^/>]*?.*?(?=")/);
     }
 
     if (match) {
@@ -273,7 +284,6 @@ function parseTextData(context: ParserContext, length: number): TextData {
   const textMatch = textData.match(/[^\s][\S\s]*[^\s]/g)!;
 
   if (!textMatch) {
-    debugger;
     emitError(11, `可能因为parseTextData的正则考虑不完善\n${context}`);
   }
   removeSpaces(context);
@@ -310,7 +320,8 @@ function removeToken(context: ParserContext, numberOfCharacters: number): void {
 
   context.offset += numberOfCharacters;
   context.line += newLine;
-  context.column = newColumnLine === -1 ? context.column + numberOfCharacters : numberOfCharacters - newColumnLine;
+  context.column =
+    newColumnLine === -1 ? context.column + numberOfCharacters : numberOfCharacters - newColumnLine;
   context.source = s.slice(numberOfCharacters);
 }
 

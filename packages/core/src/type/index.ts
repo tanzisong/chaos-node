@@ -17,7 +17,7 @@ type MutableTodo = Mutable<Todo>;
 
 /** 2 *********************************************************************************/
 interface User {
-  name?: string;
+  name: string;
   age?: number;
   address?: string;
 }
