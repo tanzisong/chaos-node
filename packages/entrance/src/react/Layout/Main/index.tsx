@@ -1,5 +1,5 @@
 import React from 'react';
 
-export default function Container(props: any) {
-  return <div>{props.children}</div>;
+export default function Main(props: any) {
+  return <div className="chaos_layout_main">{props.children}</div>;
 }

@@ -15,7 +15,7 @@ class History {
 
   listenHistoryChange() {
     this.history.listen((h) => {
-      console.info('change', h);
+      // console.info('change', h);
     });
   }
 }

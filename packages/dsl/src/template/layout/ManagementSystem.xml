@@ -1,0 +1,40 @@
+<Main>
+  <Block col="12" row="64px">
+    <Block col="2" row="12">
+      <Text>
+        Icon
+      </Text>
+    </Block>
+
+    <Block col="10" row="12">
+      <Text>
+        Menus_items
+      </Text>
+    </Block>
+  </Block>
+
+  <Block col="12" row="35px">
+    <Text>
+      BreadCrumbs
+    </Text>
+  </Block>
+
+  <Block col="12" row="{100% - 64px - 35px - 40px}">
+    <Block col="2" row="12">
+      <Text>
+        Menus_trees
+      </Text>
+    </Block>
+    <Block col="10" row="12">
+      <Text>
+        Content
+      </Text>
+    </Block>
+  </Block>
+
+  <Block col="12" row="40px">
+    <Text>
+      Bottom
+    </Text>
+  </Block>
+</Main>

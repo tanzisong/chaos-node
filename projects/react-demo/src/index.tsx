@@ -1,8 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 
-import './css/tailwindcss.css';
-
 import App from './App';
+import './css/tailwindcss.css';
 
 render(<App />, document.querySelector('#root'));

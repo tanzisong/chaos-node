@@ -15,13 +15,11 @@
 
 import { parse, genContext } from './compile';
 // import ReactXml from './template/layout/index.xml';
-import ReactXml from './template/layout/page.xml';
+import ReactXml from './template/layout/ManagementSystem.xml';
 // import ReactXml from './template/layout/multilayer.xml';
 // import ReactXml from './template/layout/react.xml';
 
-const AST = parse(
-  genContext(`<text script="(() => { console.info('啦啦啦') })()" tesst="sssss">sssss</text>`),
-);
+const AST = parse(genContext(ReactXml));
 
 export * from './render';
 export { AST };
