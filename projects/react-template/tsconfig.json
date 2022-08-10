@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "module": "es6",
+    "target": "es5",
+    "allowJs": true,
+    "jsx": "preserve",
+    "typeRoots": ["./node_modules/@types", "../../node_modules/@types", "./src/vite-env.d.ts"]
+  },
+  "exclude": ["node_modules", "dist"]
+}

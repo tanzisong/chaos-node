@@ -1,8 +1,8 @@
 type TagName = string;
 type TextData = string;
 
-export type PropValue = string | true;
-export type PropName = string;
+type PropValue = string | true;
+type PropName = string;
 
 interface Props {
   [key: string]: PropValue;
@@ -43,4 +43,4 @@ const enum TagType {
   End,
 }
 
-export { Quoted, AST, TagType, TagName, TextData, Props };
+export { Quoted, AST, TagType, TagName, TextData, Props, PropValue, PropName };

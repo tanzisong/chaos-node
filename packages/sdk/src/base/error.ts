@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 
 enum ErrorCode {
-  ComponentNotFound = '该组件为注册, 请检查',
+  ComponentNotFound = '该组件未注册, 请检查',
 }
 
 @injectable()

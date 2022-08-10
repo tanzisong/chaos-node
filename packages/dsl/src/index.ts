@@ -22,4 +22,5 @@ import ReactXml from './template/layout/ManagementSystem.xml';
 const AST = parse(genContext(ReactXml));
 
 export * from './render';
+export * from './compile';
 export { AST };
