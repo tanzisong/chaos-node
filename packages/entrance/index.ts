@@ -1,1 +1,1 @@
-export * as ReactComponent from './src/react';
+export * as ReactComponents from './src/react';

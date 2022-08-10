@@ -11,7 +11,7 @@ interface Props {
 type AST = AstNode[];
 
 export interface AstNode {
-  tag: string;
+  tag: TagName;
   props: Props;
   children: AST;
 }

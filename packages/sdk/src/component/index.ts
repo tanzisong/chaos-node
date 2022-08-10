@@ -27,8 +27,8 @@ class Component {
   }
 }
 
-function registerComponent(Component: Record<string, ReactNode>) {
-  Object.entries(Component).forEach((component) => {
+function registerComponent(Components: Record<string, ReactNode>) {
+  Object.entries(Components).forEach((component) => {
     if (!isFunction(component[1])) {
       throw new Error(`registerComponent error: ${component[0]}is not an react function`);
     }

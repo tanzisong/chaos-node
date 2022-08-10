@@ -43,8 +43,7 @@ function RenderNode(node: AstNode): ReactNode {
  * 渲染layout区域节点
  * 校验: 1: 布局节点名称 2: 布局属性比例
  * */
-// :ReactNode
-function LayoutAreaRender(node: AstNode) {
+function LayoutAreaRender(node: AstNode): ReactNode {
   const { tag: tagName, children, props } = node;
 
   if (SDK.RenderSDK.isLayoutMain(tagName)) {
